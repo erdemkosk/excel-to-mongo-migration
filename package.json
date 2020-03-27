@@ -1,0 +1,21 @@
+{
+  "name": "excel-to-vehicle-migrate",
+  "version": "0.0.1",
+  "description": "Excel to Db migration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mongodb",
+    "migration",
+    "db"
+  ],
+  "author": "Erdem Köşk",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.5.5",
+    "mongoose": "^5.9.6",
+    "read-excel-file": "^4.0.6"
+  }
+}
