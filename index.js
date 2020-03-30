@@ -57,8 +57,8 @@ const readValuesFromExcelFile = async () => {
 }
 
 const addVehicle = async (plate, constraintId, warehouse, city, licence, tags,) => {
-  
-  return (
+
+  try {
     VehicleModel.add({status: config.VEHICLE_STATUSES.AVAILABLE,
       plate,
       constraint: constraintId,
@@ -67,29 +67,43 @@ const addVehicle = async (plate, constraintId, warehouse, city, licence, tags,) 
       licence,
       tags
     })
-  )}
+  } catch (error) {
+    
+  }
+
+    
+  }
 
 const generateRealDataWithUsingExcelValues = async () => {
  
   let constraintId;
+  let cityId;
 
   for(let vehicle of excelVehicles){
+    let tags= [];
+
     if (vehicle.marka.includes("Honda") || vehicle.marka.includes("Hero")) {
       //Motorsiklet
-      constraintId = config.motorConstraintId;
+      constraintId = config.constraintIds.motorConstraintId;
     
     }
     else if (vehicle.marka.includes("Mitu")) {
       //Mitu
-      constraintId = config.mituConstraintId;
+      constraintId = config.constraintIds.mituConstraintId;
     }
     else{
       //Araba
-      constraintId = config.carConstraintId;
+      constraintId = config.constraintIds.carConstraintId;
     }
 
-    await addVehicle(vehicle.plaka, constraintId, vehicle.depo, "5af452b47c7e950bb7bf87ff" ,
-  {
+    !vehicle.dincer40.includes('-') ? tags.push(vehicle.dincer40) : undefined;
+    !vehicle.dincer100.includes('-') ? tags.push(vehicle.dincer100) : undefined;
+    !vehicle.dincerMoto.includes('-') ? tags.push(vehicle.dincerMoto) : undefined;
+
+    cityId = config.cities[vehicle.sehir];
+    console.log(cityId);
+
+    await addVehicle(vehicle.plaka, constraintId, vehicle.depo, cityId ,{
     licenceOwner: vehicle.ruhsatSahibi,
     licenceImage: vehicle.gorselLink,
     licenceSerial: vehicle.belgeSeri,
@@ -106,7 +120,8 @@ const generateRealDataWithUsingExcelValues = async () => {
     engineNumber: vehicle.motorNo,
     identityNumber: vehicle.sasiNo,
     inspectionValidityDate: vehicle.muayne,
-  } 
+  },
+  tags
   );
   console.log(vehicle.plaka + " Eklendi..");
   };
@@ -115,7 +130,7 @@ const generateRealDataWithUsingExcelValues = async () => {
 const run = async () => {
   await connectToDbs();
   await readValuesFromExcelFile();
-  generateRealDataWithUsingExcelValues();
+  await generateRealDataWithUsingExcelValues();
 
   excelVehicles.forEach(element => {
     //console.table(element);
